@@ -1,11 +1,23 @@
 <?php
 
-$link=mysqli_connect("localhost","root","root","tsubuyaki");
-    if(mysqli_connect_error()){
-        die("error");
-    }
+try {
+          // PDOインスタンスを生成
+          $pdo = new PDO('mysql:host=localhost;dbname=tsubuyaki;charset=utf8','root','root');
+
+        // エラー（例外）が発生した時の処理を記述
+        } catch (PDOException $e) {
+
+          // エラーメッセージを表示させる
+          echo 'データベースにアクセスできません！' . $e->getMessage();
+
+          // 強制終了
+          exit;
+        }
+
+
 //        SignUpボタンを押下したときの処理
         if(isset($_POST['SignUpButton'])){
+            
         
     //        入力チェックを以下に記載
             if(array_key_exists('email',$_POST) or array_key_exists('password',$_POST) or array_key_exists('name',$_POST)){
@@ -16,22 +28,25 @@ $link=mysqli_connect("localhost","root","root","tsubuyaki");
             }else if($_POST['name']==''){
                 echo "User Nameを入力してください";
             }else{
-             $query = "SELECT `id` FROM users WHERE `email` = '".mysqli_real_escape_string($link,$_POST['email'])."'";
-                $result = mysqli_query($link,$query);
-                if(mysqli_num_rows($result)>0){
+                echo $_POST['name'];
+                $sql = "SELECT id FROM users WHERE email = '".$_POST['email']."'";
+                $result = $pdo->query($sql);
+//                テーブルのレコード数を取得する
+                $row_cnt = $result->rowCount();
+                if($row_cnt>0){
                     echo "重複してます";
-                }else{
-                    $query = "INSERT INTO `users` (`email`,`password`,`name`) VALUES  ('".mysqli_real_escape_string($link,$_POST['email'])."','".mysqli_real_escape_string($link,$_POST['password'])."','".mysqli_real_escape_string($link,$_POST['name'])."')";
-                    print_r($query);
-                    if(mysqli_query($link,$query)){
+                }
+                else{
+                    $sql = "INSERT INTO users (email,password,name) VALUES  ('".$_POST['email']."','".$_POST['password']."','".$_POST['name']."')";
+                    if($result = $pdo->query($sql)){
                         echo "成功";
     //                    $_SESSION['email']=$_POST['email'];
     //                    header("Location: session.php");
                     }else{
                         echo "失敗";
-                        echo mysqli_real_escape_string($link,$_POST['password']);
+                        echo $_POST['password'];
 
-                        print_r($query);
+                        print_r($sql);
                     }
                 }
             }
