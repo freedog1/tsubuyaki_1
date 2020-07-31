@@ -7,40 +7,74 @@ $link=mysqli_connect("localhost","root","root","tsubuyaki");
 //        SignUpボタンを押下したときの処理
         if(isset($_POST['SignUpButton'])){
         
-//        入力チェックを以下に記載
-        if(array_key_exists('email',$_POST) or array_key_exists('password',$_POST) or array_key_exists('name',$_POST)){
-        if($_POST['email']==''){
-            echo "emailを入力してください";
-        }else if($_POST['password']==''){
-            echo "passwordを入力してください";
-        }else if($_POST['name']==''){
-            echo "User Nameを入力してください";
-        }else{
-         $query = "SELECT `id` FROM users WHERE `email` = '".mysqli_real_escape_string($link,$_POST['email'])."'";
-            $result = mysqli_query($link,$query);
-            if(mysqli_num_rows($result)>0){
-                echo "重複してます";
+    //        入力チェックを以下に記載
+            if(array_key_exists('email',$_POST) or array_key_exists('password',$_POST) or array_key_exists('name',$_POST)){
+            if($_POST['email']==''){
+                echo "emailを入力してください";
+            }else if($_POST['password']==''){
+                echo "passwordを入力してください";
+            }else if($_POST['name']==''){
+                echo "User Nameを入力してください";
             }else{
-                $query = "INSERT INTO `users` (`email`,`password`,`name`) VALUES  ('".mysqli_real_escape_string($link,$_POST['email'])."','".mysqli_real_escape_string($link,$_POST['password'])."','".mysqli_real_escape_string($link,$_POST['name'])."')";
-                print_r($query);
-                if(mysqli_query($link,$query)){
-                    echo "成功";
-//                    $_SESSION['email']=$_POST['email'];
-//                    header("Location: session.php");
+             $query = "SELECT `id` FROM users WHERE `email` = '".mysqli_real_escape_string($link,$_POST['email'])."'";
+                $result = mysqli_query($link,$query);
+                if(mysqli_num_rows($result)>0){
+                    echo "重複してます";
                 }else{
-                    echo "失敗";
-                    echo mysqli_real_escape_string($link,$_POST['password']);
-                    
+                    $query = "INSERT INTO `users` (`email`,`password`,`name`) VALUES  ('".mysqli_real_escape_string($link,$_POST['email'])."','".mysqli_real_escape_string($link,$_POST['password'])."','".mysqli_real_escape_string($link,$_POST['name'])."')";
                     print_r($query);
+                    if(mysqli_query($link,$query)){
+                        echo "成功";
+    //                    $_SESSION['email']=$_POST['email'];
+    //                    header("Location: session.php");
+                    }else{
+                        echo "失敗";
+                        echo mysqli_real_escape_string($link,$_POST['password']);
+
+                        print_r($query);
+                    }
                 }
             }
         }
     }
-    }
 //    SignInボタンを押下したときの処理
    if(isset($_POST['SignInButton'])){
-       echo "asdfadgawe";
-   }
+           //        入力チェックを以下に記載
+        if(array_key_exists('email',$_POST) or array_key_exists('password',$_POST)){
+        if($_POST['email']==''){
+                echo "emailを入力してください";
+            }else if($_POST['password']==''){
+                echo "passwordを入力してください";
+            }else{
+             $query = "SELECT `id` FROM users WHERE `email` = '".mysqli_real_escape_string($link,$_POST['email'])."'";
+                $result = mysqli_query($link,$query);
+                if(mysqli_num_rows($result)==1){
+                    print_r($result);
+                    print_r($link);
+                    
+//                    セッション
+//                    session_start();
+//                    $_SESSION['id']=$result
+                    
+                    
+                }else{
+                    $query = "INSERT INTO `users` (`email`,`password`,`name`) VALUES  ('".mysqli_real_escape_string($link,$_POST['email'])."','".mysqli_real_escape_string($link,$_POST['password'])."','".mysqli_real_escape_string($link,$_POST['name'])."')";
+                    print_r($query);
+                    if(mysqli_query($link,$query)){
+                        echo "成功";
+    //                    $_SESSION['email']=$_POST['email'];
+    //                    header("Location: session.php");
+                    }else{
+                        echo "失敗";
+                        echo mysqli_real_escape_string($link,$_POST['password']);
+
+                        print_r($query);
+                    }
+                }
+            }
+        }
+    }
+   
 ?>
 
 
