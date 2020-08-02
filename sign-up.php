@@ -1,5 +1,7 @@
 <?php
 
+
+
 try {
           // PDOインスタンスを生成
           $pdo = new PDO('mysql:host=localhost;dbname=tsubuyaki;charset=utf8','root','root');
@@ -30,6 +32,9 @@ try {
             }else{
                 echo $_POST['name'];
                 $sql = "SELECT id FROM users WHERE email = '".$_POST['email']."'";
+                
+                
+                
                 $result = $pdo->query($sql);
 //                テーブルのレコード数を取得する
                 $row_cnt = $result->rowCount();
@@ -61,34 +66,28 @@ try {
             }else if($_POST['password']==''){
                 echo "passwordを入力してください";
             }else{
-             $query = "SELECT `id` FROM users WHERE `email` = '".mysqli_real_escape_string($link,$_POST['email'])."'";
-                $result = mysqli_query($link,$query);
-                if(mysqli_num_rows($result)==1){
-                    print_r($result);
-                    print_r($link);
+             echo $_POST['email'];
+                $sql = "SELECT id FROM users WHERE email = '".$_POST['email']."'";
+                
+                $result = $pdo->query($sql);
+//                テーブルのレコード数を取得する
+                $row_cnt = $result->rowCount();
+                if($row_cnt>0){
+                    echo "ログイン成功";
+                    $_SESSION['email']=$_POST['email'];
+//                    header("Location: home.php");
+                    window.location.assign("home.php");
                     
-//                    セッション
-//                    session_start();
-//                    $_SESSION['id']=$result
-                    
-                    
-                }else{
-                    $query = "INSERT INTO `users` (`email`,`password`,`name`) VALUES  ('".mysqli_real_escape_string($link,$_POST['email'])."','".mysqli_real_escape_string($link,$_POST['password'])."','".mysqli_real_escape_string($link,$_POST['name'])."')";
-                    print_r($query);
-                    if(mysqli_query($link,$query)){
-                        echo "成功";
-    //                    $_SESSION['email']=$_POST['email'];
-    //                    header("Location: session.php");
-                    }else{
+                }
+                else{
                         echo "失敗";
-                        echo mysqli_real_escape_string($link,$_POST['password']);
+                        echo $_POST['email'];
 
-                        print_r($query);
+                        print_r($sql);
                     }
                 }
             }
         }
-    }
    
 ?>
 
