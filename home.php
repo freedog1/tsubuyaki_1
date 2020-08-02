@@ -1,4 +1,8 @@
 <?php
+
+    session_start();
+    echo $_SESSION['email'];
+
     function displayTweets(){
 //        $mysqli =new mysqli("localhost","root","root","tsubuyaki");
 //        if ($mysqli->connect_error) {
@@ -40,6 +44,7 @@
         $sql = "SELECT * FROM users";
         // SQLステートメントを実行し、結果を変数に格納
         $stmt = $pdo->query($sql);
+        print_r($stmt);
 
         // foreach文で配列の中身を一行ずつ出力
         foreach ($stmt as $row) {
