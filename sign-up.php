@@ -31,13 +31,18 @@ try {
                 echo "User Nameを入力してください";
             }else{
                 echo $_POST['name'];
-                $sql = "SELECT id FROM users WHERE email = '".$_POST['email']."'";
+                $sql = "SELECT id FROM users WHERE email = :email";
+                $stmt = $pdo->prepare($sql);
+                $stmt->bindValue(':email',$_POST['email']);
+                $stmt->execute(); 
+                $user = $stmt->fetch();
+                print_r($sql);
+                print_r($stmt);
+                print_r($user);
                 
-                
-                
-                $result = $pdo->query($sql);
+//                $result = $pdo->query($sql);
 //                テーブルのレコード数を取得する
-                $row_cnt = $result->rowCount();
+                $row_cnt = $user->rowCount();
                 if($row_cnt>0){
                     echo "重複してます";
                 }
