@@ -30,33 +30,29 @@ try {
             }else if($_POST['name']==''){
                 echo "User Nameを入力してください";
             }else{
-                echo $_POST['name'];
+                echo $_POST['email'];
                 $sql = "SELECT id FROM users WHERE email = :email";
                 $stmt = $pdo->prepare($sql);
                 $stmt->bindValue(':email',$_POST['email']);
-                $stmt->execute(); 
-                $user = $stmt->fetch();
-                print_r($sql);
-                print_r($stmt);
-                print_r($user);
-                
-//                $result = $pdo->query($sql);
+                $stmt->execute();
 //                テーブルのレコード数を取得する
-                $row_cnt = $user->rowCount();
+                $row_cnt = $stmt->rowCount();
                 if($row_cnt>0){
                     echo "重複してます";
+                    echo $row_cnt;
                 }
                 else{
-                    $sql = "INSERT INTO users (email,password,name) VALUES  ('".$_POST['email']."','".$_POST['password']."','".$_POST['name']."')";
-                    if($result = $pdo->query($sql)){
+                    $sql = "INSERT INTO users (email,password,name) VALUES  (:email,:password,:name)";
+                    $stmt = $pdo->prepare($sql);
+                    $stmt->bindValue(':email',$_POST['email']);
+                    $stmt->bindValue(':password',$_POST['password']);
+                    $stmt->bindValue(':name',$_POST['name']);
+                    
+                    
+                    if($stmt->execute()){
                         echo "成功";
-    //                    $_SESSION['email']=$_POST['email'];
-    //                    header("Location: session.php");
                     }else{
                         echo "失敗";
-                        echo $_POST['password'];
-
-                        print_r($sql);
                     }
                 }
             }
@@ -66,33 +62,44 @@ try {
    if(isset($_POST['SignInButton'])){
            //        入力チェックを以下に記載
         if(array_key_exists('email',$_POST) or array_key_exists('password',$_POST)){
-        if($_POST['email']==''){
+            if($_POST['email']==''){
                 echo "emailを入力してください";
             }else if($_POST['password']==''){
                 echo "passwordを入力してください";
             }else{
-             echo $_POST['email'];
-                $sql = "SELECT id FROM users WHERE email = '".$_POST['email']."'";
+                $sql = "SELECT * FROM users WHERE email = :email";
+                $stmt = $pdo->prepare($sql);
+                $stmt->bindValue(':email',$_POST['email']);
+                $stmt->execute();
+                print_r($sql);
+                $user = $stmt->fetch();
+                print_r($user);
                 
-                $result = $pdo->query($sql);
-//                テーブルのレコード数を取得する
-                $row_cnt = $result->rowCount();
-                if($row_cnt>0){
+                if(password_verify($_POST['password'],$user['password'])){
                     echo "ログイン成功";
-                    $_SESSION['email']=$_POST['email'];
-//                    header("Location: home.php");
-                    window.location.assign("home.php");
-                    
                 }
                 else{
-                        echo "失敗";
-                        echo $_POST['email'];
-
-                        print_r($sql);
+                    echo "ログイン失敗"; 
+                    echo $_POST['password'];
+                    echo $user['password'];
+                }
+                
+                
+//                if($row_cnt>0){
+//                    echo "ログイン成功";
+//                    $_SESSION['email']=$_POST['email'];
+////                    header("Location: home.php");
+//                    window.location.assign("home.php");
+//                    
+//                }
+//                else{
+//                        echo "失敗";
+//                        echo $_POST['email'];
+//
+//                        print_r($sql);
                     }
                 }
             }
-        }
    
 ?>
 
