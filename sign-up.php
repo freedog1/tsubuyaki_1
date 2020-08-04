@@ -75,31 +75,20 @@ try {
                 $user = $stmt->fetch();
                 print_r($user);
                 
-                if(password_verify($_POST['password'],$user['password'])){
+//                if(password_verify($_POST['password'],$user['password'])){
+                if($_POST['password'] == $user['password']){
                     echo "ログイン成功";
+                    $_SESSION['name'] = $user['name'];
+                    header("Location: home.php"); 
                 }
                 else{
                     echo "ログイン失敗"; 
                     echo $_POST['password'];
                     echo $user['password'];
                 }
-                
-                
-//                if($row_cnt>0){
-//                    echo "ログイン成功";
-//                    $_SESSION['email']=$_POST['email'];
-////                    header("Location: home.php");
-//                    window.location.assign("home.php");
-//                    
-//                }
-//                else{
-//                        echo "失敗";
-//                        echo $_POST['email'];
-//
-//                        print_r($sql);
-                    }
-                }
             }
+        }
+    }
    
 ?>
 
