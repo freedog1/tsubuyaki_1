@@ -1,6 +1,6 @@
 <?php
 
-
+session_start();
 
 try {
           // PDOインスタンスを生成
@@ -79,7 +79,10 @@ try {
                 if($_POST['password'] == $user['password']){
                     echo "ログイン成功";
                     $_SESSION['name'] = $user['name'];
+                    echo "session:";
+                    echo $_SESSION['name'];
                     header("Location: home.php"); 
+                    exit();
                 }
                 else{
                     echo "ログイン失敗"; 
