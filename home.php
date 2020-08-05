@@ -1,7 +1,11 @@
 <?php
 
-    session_start();
-//    echo $_SESSION['email'];
+session_start();
+echo $_SESSION['name'];
+//    if(!isset($_SESSION['name'])){
+//        header("Location: index.php");
+//        exit();
+//    }
 
     function displayTweets(){
 //        $mysqli =new mysqli("localhost","root","root","tsubuyaki");
@@ -24,8 +28,6 @@
 //        $mysqli->close();
 //        }
 //    }
-        
-        
         
         try {
           // PDOインスタンスを生成
