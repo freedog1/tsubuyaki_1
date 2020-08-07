@@ -1,3 +1,5 @@
+
+
 <?php
 
 session_start();
@@ -106,6 +108,12 @@ echo $_SESSION['name'];
             padding: 5px;
             margin: 5px;
         }
+/*
+        #tsubuyaki_box{
+            height: 200px;
+            width: 220px;
+        }
+*/
       
     </style>
 
@@ -141,11 +149,14 @@ echo $_SESSION['name'];
     </div>
 <!--      3カラム目だけ回り込ませたい-->
     <div class="col-sm">
-      three of three columns
-        three of three columns
-        three of three columns
-        three of three columns
-        three of three columns
+        つぶやきを入力してください。
+        <form method="post" id="tsubuyaki_form">
+            <div id="tsubuyaki">
+                <textarea rows="10" cols="20" id="tsubuyaki_box"></textarea>
+                <button type="submit" class="btn btn-primary" name="SignUpButton">つぶやく</button> 
+            </div>
+        </form>
+            
     </div>
   </div>
 </div>
@@ -153,4 +164,3 @@ echo $_SESSION['name'];
 </body>
 
 </html>
-
