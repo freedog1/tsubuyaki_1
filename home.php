@@ -48,7 +48,16 @@ try {
     
     function showName(){
         global $pdo;
-        $sql = "SELECT name FROM user WHERE id = $_SESSION['id']";
+        $sql_name = "SELECT name FROM users WHERE id = :id";
+        $stmt = $pdo->prepare($sql_name);
+        $stmt->bindvalue(':id',$_SESSION['id']);
+        if($stmt->execute()){
+            foreach( $stmt as $value ) {
+		      echo "$value[name]<br>";
+	       }
+        }else{
+            echo "失敗";
+        }
     }
 
 
@@ -153,7 +162,7 @@ try {
         ?>            
         <div class="card">
             <div class="card-header">
-                Featured
+                <?php showName(); ?>
             </div>
             <div class="card-body">
                 <h5 class="card-title">
