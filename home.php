@@ -27,45 +27,32 @@ try {
 //    }
 
 
-    function displayTweets(){
-            global $pdo;  
-//        $mysqli =new mysqli("localhost","root","root","tsubuyaki");
-//        if ($mysqli->connect_error) {
-//        echo $mysqli->connect_error;
-//        exit();
-//        } else {
-//            $mysqli->set_charset("utf8");
-//        }
+//    function displayTweets(){
+//            global $pdo;  
+// 
+//        $sql = "SELECT * FROM tweet";
+//        // SQLステートメントを実行し、結果を変数に格納
+//        $stmt = $pdo->query($sql);
+//        print_r($stmt);
 //
-//    //    DB処理
-//        $sql = "SELECT name FROM users WHERE email = 'aaa@aaa'";
-//        if ($result = $mysqli->query($sql)) {
-//        // 連想配列を取得
-//            while ($row = $result->fetch_assoc()) {
-//                echo "<br>" .$row["name"]. "<br>";
-//                echo "rows=" . $result->num_rows;
-//                
-//            }
-//        $mysqli->close();
-//        }
+//        // foreach文で配列の中身を一行ずつ出力
+//        foreach ($stmt as $row) {
+//
+//          // データベースのフィールド名で出力
+//          echo $row['id'].'：'.$row['text'];
+//
+//          // 改行を入れる
+//          echo '<br>';
+//        }        
 //    }
-       
- 
-        $sql = "SELECT * FROM users";
-        // SQLステートメントを実行し、結果を変数に格納
-        $stmt = $pdo->query($sql);
-        print_r($stmt);
-
-        // foreach文で配列の中身を一行ずつ出力
-        foreach ($stmt as $row) {
-
-          // データベースのフィールド名で出力
-          echo $row['name'].'：'.$row['email'].'人';
-
-          // 改行を入れる
-          echo '<br>';
-        }        
+    
+    function showName(){
+        global $pdo;
+        $sql = "SELECT name FROM user WHERE id = $_SESSION['id']";
     }
+
+
+
 
     if(isset($_POST['tsubuyaki_button'])){
         global $pdo;
@@ -81,12 +68,12 @@ try {
         $stmt->bindValue(':text',$_POST['textarea']);
         $stmt->bindValue(':created_at',date("Y/m/d H:i:s"));
         $stmt->bindValue(':id',$_SESSION['id']);
-        $stmt->execute();
-        
+        if($stmt->execute()){
+            echo "つぶやきました";
+        }else{
+            echo "つぶやき投稿エラー";
+        }
     }
-        
-        
-
 ?>
 
 
@@ -137,13 +124,8 @@ try {
 */
       
     </style>
-
 </head>
-
-
 <body>
-
-
 
 <div class="container">
   <div class="row">
@@ -157,17 +139,50 @@ try {
         </div>
     </div>
     <div class="col-6">
+        <?php displayTweets(); ?>
+        <?php    function displayTweets(){
+            global $pdo;  
+ 
+        $sql = "SELECT * FROM tweet";
+        // SQLステートメントを実行し、結果を変数に格納
+        $stmt = $pdo->query($sql);
+        print_r($stmt);
+
+        // foreach文で配列の中身を一行ずつ出力
+        foreach ($stmt as $row) {
+        ?>            
+        <div class="card">
+            <div class="card-header">
+                Featured
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">
+            <?php            
+                // データベースのフィールド名で出力
+              echo $row['id'].'：'.$row['text'];
+              // 改行を入れる
+              echo '<br>';
+            ?>
+                </h5>
+                <p class="card-text"></p>
+            </div>
+        </div>
+        <?php
+                }        
+            }
+        ?>
+    </div>
+<!--
+    <div class="col-6">
       <p>One of three columnsOne of three columnsOne of three columnsOne of three columnsOne of three columnsOne of three columnsOne of three columnsOne of three columns</p>
     <div class="tweet">
-        <?php displayTweets(); ?>
         
             <p>username</p>
-        
-    <p>texttexttext texttexttexttexttexttexttexttexttext texttexttexttexttexttexttexttexttexttexttexttexttexttexttext</p>
         </div>
             
         
     </div>
+-->
 <!--      3カラム目だけ回り込ませたい-->
     <div class="col-sm">
         つぶやきを入力してください。
