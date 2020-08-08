@@ -4,12 +4,31 @@
 
 session_start();
 echo $_SESSION['name'];
+echo $_SESSION['id'];
+
+try {
+    // PDOインスタンスを生成    
+    $pdo = new PDO('mysql:host=localhost;dbname=tsubuyaki;charset=utf8','root','root');
+
+        // エラー（例外）が発生した時の処理を記述
+        } catch (PDOException $e) {
+
+          // エラーメッセージを表示させる
+          echo 'データベースにアクセスできません！' . $e->getMessage();
+
+          // 強制終了
+          exit;
+        }
+
+
 //    if(!isset($_SESSION['name'])){
 //        header("Location: index.php");
 //        exit();
 //    }
 
+
     function displayTweets(){
+            global $pdo;  
 //        $mysqli =new mysqli("localhost","root","root","tsubuyaki");
 //        if ($mysqli->connect_error) {
 //        echo $mysqli->connect_error;
@@ -30,21 +49,8 @@ echo $_SESSION['name'];
 //        $mysqli->close();
 //        }
 //    }
-        
-        try {
-          // PDOインスタンスを生成
-          $pdo = new PDO('mysql:host=localhost;dbname=tsubuyaki;charset=utf8','root','root');
-
-        // エラー（例外）が発生した時の処理を記述
-        } catch (PDOException $e) {
-
-          // エラーメッセージを表示させる
-          echo 'データベースにアクセスできません！' . $e->getMessage();
-
-          // 強制終了
-          exit;
-        }
-        
+       
+ 
         $sql = "SELECT * FROM users";
         // SQLステートメントを実行し、結果を変数に格納
         $stmt = $pdo->query($sql);
@@ -58,9 +64,24 @@ echo $_SESSION['name'];
 
           // 改行を入れる
           echo '<br>';
-        }
+        }        
+    }
+
+    if(isset($_POST['tsubuyaki_button'])){
+        global $pdo;
+        echo "ボタン";
+        echo $_POST['textarea'];
+        date_default_timezone_set('Asia/Tokyo');
+        echo date("Y/m/d H:i:s");
+        echo $_SESSION['id'];
         
         
+        $sql = "INSERT INTO tweet (text,created_at,id) VALUES (:text,:created_at,:id)";
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindValue(':text',$_POST['textarea']);
+        $stmt->bindValue(':created_at',date("Y/m/d H:i:s"));
+        $stmt->bindValue(':id',$_SESSION['id']);
+        $stmt->execute();
         
     }
         
@@ -151,9 +172,9 @@ echo $_SESSION['name'];
     <div class="col-sm">
         つぶやきを入力してください。
         <form method="post" id="tsubuyaki_form">
-            <div id="tsubuyaki">
-                <textarea rows="10" cols="20" id="tsubuyaki_box"></textarea>
-                <button type="submit" class="btn btn-primary" name="SignUpButton">つぶやく</button> 
+            <div id="tsubuyaki_form">
+                <textarea type="text" name="textarea" cols="20" rows="5"></textarea>
+                <input type="submit" class="btn btn-primary" name="tsubuyaki_button" value="つぶやく">
             </div>
         </form>
             
