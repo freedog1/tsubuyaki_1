@@ -3,8 +3,6 @@
 <?php
 
 session_start();
-echo $_SESSION['name'];
-echo $_SESSION['id'];
 
 try {
     // PDOインスタンスを生成    
@@ -21,64 +19,33 @@ try {
         }
 
 
-//    if(!isset($_SESSION['name'])){
-//        header("Location: index.php");
-//        exit();
-//    }
-
-
-//    function displayTweets(){
-//            global $pdo;  
-// 
-//        $sql = "SELECT * FROM tweet";
-//        // SQLステートメントを実行し、結果を変数に格納
-//        $stmt = $pdo->query($sql);
-//        print_r($stmt);
-//
-//        // foreach文で配列の中身を一行ずつ出力
-//        foreach ($stmt as $row) {
-//
-//          // データベースのフィールド名で出力
-//          echo $row['id'].'：'.$row['text'];
-//
-//          // 改行を入れる
-//          echo '<br>';
-//        }        
-//    }
     
-    function showName(){
+    function showName($id){
         global $pdo;
         $sql_name = "SELECT name FROM users WHERE id = :id";
         $stmt = $pdo->prepare($sql_name);
-        $stmt->bindvalue(':id',$_SESSION['id']);
+        $stmt->bindvalue(':id',$id);
         if($stmt->execute()){
             foreach( $stmt as $value ) {
-		      echo "$value[name]<br>";
+                echo "name: ";
+                echo "$value[name]<br>";
 	       }
         }else{
             echo "失敗";
         }
     }
 
-
-
-
     if(isset($_POST['tsubuyaki_button'])){
         global $pdo;
-        echo "ボタン";
-        echo $_POST['textarea'];
-        date_default_timezone_set('Asia/Tokyo');
-        echo date("Y/m/d H:i:s");
-        echo $_SESSION['id'];
-        
-        
         $sql = "INSERT INTO tweet (text,created_at,id) VALUES (:text,:created_at,:id)";
         $stmt = $pdo->prepare($sql);
         $stmt->bindValue(':text',$_POST['textarea']);
+        date_default_timezone_set('Asia/Tokyo');
         $stmt->bindValue(':created_at',date("Y/m/d H:i:s"));
         $stmt->bindValue(':id',$_SESSION['id']);
         if($stmt->execute()){
             echo "つぶやきました";
+            header("Location: home.php");
         }else{
             echo "つぶやき投稿エラー";
         }
@@ -141,13 +108,13 @@ try {
     <div class="col">
         <div id="nav-column">
             <nav class="nav flex-column">
-              <a class="nav-link active" href="#">ホーム</a>
-              <a class="nav-link" href="#">プロフィール</a>
-              <a class="nav-link disabled" href="#">つぶやく</a>
+              <a class="nav-link active" href="home.php">ホーム</a>
+              <a class="nav-link" href="profile.php">自分のつぶやき</a>
             </nav>
         </div>
     </div>
     <div class="col-6">
+        <h2>つぶやき</h2>
         <?php displayTweets(); ?>
         <?php    function displayTweets(){
             global $pdo;  
@@ -155,22 +122,20 @@ try {
         $sql = "SELECT * FROM tweet";
         // SQLステートメントを実行し、結果を変数に格納
         $stmt = $pdo->query($sql);
-        print_r($stmt);
 
         // foreach文で配列の中身を一行ずつ出力
         foreach ($stmt as $row) {
         ?>            
         <div class="card">
             <div class="card-header">
-                <?php showName(); ?>
+<!--                <?php echo $row['id']; ?>-->
+                <?php showName($row['id']); ?> 
             </div>
             <div class="card-body">
                 <h5 class="card-title">
             <?php            
                 // データベースのフィールド名で出力
-              echo $row['id'].'：'.$row['text'];
-              // 改行を入れる
-              echo '<br>';
+              echo $row['text'];
             ?>
                 </h5>
                 <p class="card-text"></p>
