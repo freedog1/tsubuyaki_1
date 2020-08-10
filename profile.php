@@ -1,10 +1,17 @@
+<!--
+ログインしたユーザーのツイートのみ表示
+そのほかははhome.phpとほぼ同じ。本来は同箇所はまとめるべき。
+-->
+
+
 <?php
 
 session_start();
 
 try {
-    // PDOインスタンスを生成    
-    $pdo = new PDO('mysql:host=localhost;dbname=tsubuyaki;charset=utf8','root','root');
+    // PDOインスタンスを生成  
+    $ini = parse_ini_file('./db.ini',FALSE);
+    $pdo = new PDO('mysql:host='.$ini['host'].';dbname='.$ini['dbname'].';charset=utf8', $ini['dbuser'], $ini['dbpass']);
 
         // エラー（例外）が発生した時の処理を記述
         } catch (PDOException $e) {
@@ -36,21 +43,22 @@ try {
 
     if(isset($_POST['tsubuyaki_button'])){
         global $pdo;
-        $sql = "INSERT INTO tweet (text,created_at,id) VALUES (:text,:created_at,:id)";
-        $stmt = $pdo->prepare($sql);
-        $stmt->bindValue(':text',$_POST['textarea']);
-        date_default_timezone_set('Asia/Tokyo');
-        $stmt->bindValue(':created_at',date("Y/m/d H:i:s"));
-        $stmt->bindValue(':id',$_SESSION['id']);
-        if($stmt->execute()){
-            echo "つぶやきました";
-            header("Location: home.php");
-        }else{
-            echo "つぶやき投稿エラー";
+        if(!$_POST['textarea']==''){    
+            $sql = "INSERT INTO tweet (text,created_at,id) VALUES (:text,:created_at,:id)";
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindValue(':text',$_POST['textarea']);
+            date_default_timezone_set('Asia/Tokyo');
+            $stmt->bindValue(':created_at',date("Y/m/d H:i:s"));
+            $stmt->bindValue(':id',$_SESSION['id']);
+            if($stmt->execute()){
+                echo "つぶやきました";
+                header("Location: home.php");
+            }else{
+                echo "つぶやき投稿エラー";
+            }
         }
     }
 ?>
-
 
 
 <!doctype html>
@@ -119,7 +127,7 @@ try {
         <?php    function displayTweets(){
             global $pdo;  
  
-        $sql = "SELECT * FROM tweet WHERE id = $_SESSION[id]";
+        $sql = "SELECT * FROM tweet WHERE id = $_SESSION[id] LIMIT 30";
         // SQLステートメントを実行し、結果を変数に格納
         $stmt = $pdo->query($sql);
 
@@ -146,17 +154,7 @@ try {
             }
         ?>
     </div>
-<!--
-    <div class="col-6">
-      <p>One of three columnsOne of three columnsOne of three columnsOne of three columnsOne of three columnsOne of three columnsOne of three columnsOne of three columns</p>
-    <div class="tweet">
-        
-            <p>username</p>
-        </div>
-            
-        
-    </div>
--->
+
 <!--      3カラム目だけ回り込ませたい-->
     <div class="col-sm">
         つぶやきを入力してください。
