@@ -1,25 +1,23 @@
-
-
 <?php
 
 session_start();
 
+//DB接続
 try {
     // PDOインスタンスを生成    
-    $pdo = new PDO('mysql:host=localhost;dbname=tsubuyaki;charset=utf8','root','root');
+    $ini = parse_ini_file('./db.ini',FALSE);
+    $pdo = new PDO('mysql:host='.$ini['host'].';dbname='.$ini['dbname'].';charset=utf8', $ini['dbuser'], $ini['dbpass']);
 
         // エラー（例外）が発生した時の処理を記述
         } catch (PDOException $e) {
 
           // エラーメッセージを表示させる
           echo 'データベースにアクセスできません！' . $e->getMessage();
-
           // 強制終了
           exit;
         }
 
-
-    
+//ユーザーネームを表示するファンクション
     function showName($id){
         global $pdo;
         $sql_name = "SELECT name FROM users WHERE id = :id";
@@ -35,19 +33,24 @@ try {
         }
     }
 
+//テキストエリアに入力されたテキストをDBに登録
     if(isset($_POST['tsubuyaki_button'])){
         global $pdo;
-        $sql = "INSERT INTO tweet (text,created_at,id) VALUES (:text,:created_at,:id)";
-        $stmt = $pdo->prepare($sql);
-        $stmt->bindValue(':text',$_POST['textarea']);
-        date_default_timezone_set('Asia/Tokyo');
-        $stmt->bindValue(':created_at',date("Y/m/d H:i:s"));
-        $stmt->bindValue(':id',$_SESSION['id']);
-        if($stmt->execute()){
-            echo "つぶやきました";
-            header("Location: home.php");
-        }else{
-            echo "つぶやき投稿エラー";
+        if(!$_POST['textarea']==''){    
+            $sql = "INSERT INTO tweet (text,created_at,id) VALUES (:text,:created_at,:id)";
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindValue(':text',$_POST['textarea']);
+            date_default_timezone_set('Asia/Tokyo');
+            $stmt->bindValue(':created_at',date("Y/m/d H:i:s"));
+            $stmt->bindValue(':id',$_SESSION['id']);
+            if($stmt->execute()){
+                echo "つぶやきました";
+                header("Location: home.php");
+            }else{
+                echo "つぶやき投稿エラー";
+                echo $_SESSION['id'];
+                
+            }
         }
     }
 ?>
@@ -119,7 +122,7 @@ try {
         <?php    function displayTweets(){
             global $pdo;  
  
-        $sql = "SELECT * FROM tweet";
+        $sql = "SELECT * FROM tweet LIMIT 30";
         // SQLステートメントを実行し、結果を変数に格納
         $stmt = $pdo->query($sql);
 
@@ -128,7 +131,7 @@ try {
         ?>            
         <div class="card">
             <div class="card-header">
-<!--                <?php echo $row['id']; ?>-->
+<!--                ユーザーネーム表示-->
                 <?php showName($row['id']); ?> 
             </div>
             <div class="card-body">
@@ -146,18 +149,8 @@ try {
             }
         ?>
     </div>
-<!--
-    <div class="col-6">
-      <p>One of three columnsOne of three columnsOne of three columnsOne of three columnsOne of three columnsOne of three columnsOne of three columnsOne of three columns</p>
-    <div class="tweet">
-        
-            <p>username</p>
-        </div>
-            
-        
-    </div>
--->
-<!--      3カラム目だけ回り込ませたい-->
+
+<!-- ページサイズが小さくなった際に3カラム目だけ回り込ませる-->
     <div class="col-sm">
         つぶやきを入力してください。
         <form method="post" id="tsubuyaki_form">
