@@ -1,3 +1,5 @@
+<!--トグル設定-->
+
 <script type="text/javascript">
     $(document).ready(function(){
         $(".toggleSwitch").click(function(){
