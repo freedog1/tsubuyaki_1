@@ -4,14 +4,14 @@ session_start();
 
 try {
           // PDOインスタンスを生成
-          $pdo = new PDO('mysql:host=localhost;dbname=tsubuyaki;charset=utf8','root','root');
+        $ini = parse_ini_file('./db.ini',FALSE);
+          $pdo = new PDO('mysql:host='.$ini['host'].';dbname='.$ini['dbname'].';charset=utf8', $ini['dbuser'], $ini['dbpass']);
 
         // エラー（例外）が発生した時の処理を記述
         } catch (PDOException $e) {
 
           // エラーメッセージを表示させる
           echo 'データベースにアクセスできません！' . $e->getMessage();
-
           // 強制終了
           exit;
         }
@@ -75,12 +75,12 @@ try {
                 $user = $stmt->fetch();
                 print_r($user);
                 
-//                if(password_verify($_POST['password'],$user['password'])){
                 if($_POST['password'] == $user['password']){
                     echo "ログイン成功";
                     $_SESSION['name'] = $user['name'];
+                    $_SESSION['id'] = $user['id'];
                     echo "session:";
-                    echo $_SESSION['name'];
+                    echo $_SESSION['id'];
                     header("Location: home.php"); 
                     exit();
                 }
@@ -120,12 +120,7 @@ try {
 
 <form method="post" id="sign-in-form">
   <h1>TSUBUYAKI</h1>
-<!--
-  <div class="form-group">
-    <label for="exampleInputUserName">User Name</label>
-    <input name="name" class="form-control" id="exampleInputUserName"  placeholder="Enter User Name">
-  </div>
--->
+
   <div class="form-group">
     <label for="exampleInputEmail1">Email address</label>
     <input name="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
