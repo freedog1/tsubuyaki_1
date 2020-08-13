@@ -4,8 +4,10 @@ session_start();
 
 try {
           // PDOインスタンスを生成
-        $ini = parse_ini_file('./db.ini',FALSE);
-          $pdo = new PDO('mysql:host='.$ini['host'].';dbname='.$ini['dbname'].';charset=utf8', $ini['dbuser'], $ini['dbpass']);
+//        $ini = parse_ini_file('./db.ini',FALSE);
+//          $pdo = new PDO('mysql:host='.$ini['host'].';dbname='.$ini['dbname'].';charset=utf8', $ini['dbuser'], $ini['dbpass']);
+    
+        $pdo = new PDO('mysql:host=localhost;dbname=tsubuyaki;charset=utf8','root','root');
 
         // エラー（例外）が発生した時の処理を記述
         } catch (PDOException $e) {
