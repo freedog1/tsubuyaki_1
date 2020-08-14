@@ -123,15 +123,18 @@ try {
         </div>
     </div>
     <div class="col-6">
-        <h2>自分のつぶやき</h2>
+        <h2>つぶやき</h2>
         <?php displayTweets(); ?>
         <?php    function displayTweets(){
             global $pdo;  
 // 
 //        $sql = "SELECT * FROM tweet WHERE id = $_SESSION[id] ORDER BY tweet_id DESC LIMIT 30";
 //    getでif
-    
-        $sql = "SELECT * FROM tweet WHERE id = $_GET[id] ORDER BY tweet_id DESC LIMIT 30";
+        if(empty($_GET['id'])){
+            $sql = "SELECT * FROM tweet WHERE id = $_SESSION[id] ORDER BY tweet_id DESC LIMIT 30";
+        }else{
+            $sql = "SELECT * FROM tweet WHERE id = $_GET[id] ORDER BY tweet_id DESC LIMIT 30";
+        }
         // SQLステートメントを実行し、結果を変数に格納
         $stmt = $pdo->query($sql);
 
@@ -140,7 +143,6 @@ try {
         ?>            
         <div class="card">
             <div class="card-header">
-<!--                <?php echo $row['id']; ?>-->
                 <?php showName($row['id']); ?> 
             </div>
             <div class="card-body">
