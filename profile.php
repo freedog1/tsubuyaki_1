@@ -127,8 +127,11 @@ try {
         <?php displayTweets(); ?>
         <?php    function displayTweets(){
             global $pdo;  
- 
-        $sql = "SELECT * FROM tweet WHERE id = $_SESSION[id] ORDER BY tweet_id DESC LIMIT 30";
+// 
+//        $sql = "SELECT * FROM tweet WHERE id = $_SESSION[id] ORDER BY tweet_id DESC LIMIT 30";
+//    getでif
+    
+        $sql = "SELECT * FROM tweet WHERE id = $_GET[id] ORDER BY tweet_id DESC LIMIT 30";
         // SQLステートメントを実行し、結果を変数に格納
         $stmt = $pdo->query($sql);
 
