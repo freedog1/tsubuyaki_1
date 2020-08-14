@@ -27,8 +27,10 @@ try {
         $stmt->bindvalue(':id',$id);
         if($stmt->execute()){
             foreach( $stmt as $value ) {
+                echo "<a href="."profile.php?"."id=".$id.">";
                 echo "name: ";
                 echo "$value[name]<br>";
+                echo "</a>";
 	       }
         }else{
             echo "失敗";
@@ -134,7 +136,7 @@ try {
         <div class="card">
             <div class="card-header">
 <!--                ユーザーネーム表示-->
-                <?php showName($row['id']); ?> 
+                <?php showName($row['id']); ?>
             </div>
             <div class="card-body">
                 <h5 class="card-title">
